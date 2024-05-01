@@ -15,14 +15,33 @@
     </div>
     </form>
 
-    <div v-for="todo in todos" :key="todo.id" class="card">
+    <div 
+      v-for="todo in todos" 
+      :key="todo.id" 
+      class="card" 
+      :class="{'has-background-success-light': todo.done }"
+    >
       <div class="card-content">
         <div class="content">
           <div class="columns is-mobile is-vcentered">
-            <div class="column">{{todo.content}}</div>
+            <div class="column"
+            :class="{'has-text-success line-trough': todo.done}">
+              {{todo.content}}
+            </div>
             <div class="column has-text-right">
-              <button class="button is-ligth">&check;</button>
-              <button class="button is-danger ml-2">&cross;</button>
+              <button 
+                @click="toggleDone(todo.id)"
+                class="button is-ligth"
+                :class="todo.done? 'is-success' : 'is-light'"
+              >
+                &check;
+              </button>
+              <button 
+                @click="deleteTodo(todo.id)" 
+                class="button is-danger ml-2"
+              >
+                &cross;
+              </button>
             </div>
           </div>
         </div>
@@ -35,6 +54,7 @@
 <script setup>
 import { ref } from 'vue';
 import { v4 as uuidv4 } from 'uuid';
+
 const todos = ref([
   // {
   //   id: "id1",
@@ -61,6 +81,18 @@ const addTodo = () => {
   newtodoContent.value = ""
 }
 
+const deleteTodo = (id) => {
+  todos.value = todos.value.filter((todo) => todo.id !== id)
+}
+
+const toggleDone = (id) => {
+  const todo = todos.value.find((todo) => todo.id === id)
+  //можно было как в лекции:
+  // const index = todos.value.findIndex((todo) => todo.id === id)
+  // todos.value[index].done = !todos.value[index].done
+  todo.done = !todo.done
+}
+
 </script>
 
 <style>
@@ -70,5 +102,9 @@ const addTodo = () => {
   max-width: 400px;
   padding: 20px;
   margin: 0 auto;
+}
+
+.line-trough {
+  text-decoration: line-through;
 }
 </style>
